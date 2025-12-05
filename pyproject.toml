@@ -1,0 +1,24 @@
+[project]
+name = "vec-search-demo"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "beautifulsoup4>=4.14.3",
+    "dotenv>=0.9.9",
+    "flask>=3.1.2",
+    "httpx>=0.28.1",
+    "mammoth>=1.11.0",
+    "numpy>=2.3.5",
+    "ocrmypdf>=16.12.0",
+    "pandas>=2.3.3",
+    "pgvector>=0.4.2",
+    "pillow>=12.0.0",
+    "psycopg[binary]>=3.3.1",
+    "pymupdf>=1.26.6",
+    "pytesseract>=0.3.13",
+    "python-docx>=1.2.0",
+    "pywin32>=311",
+    "striprtf>=0.0.29",
+]

@@ -1,0 +1,16 @@
+# dotenv files
+.env
+
+# pycache files
+__pycache__/
+*.py[cod]
+
+# virtual environment
+venv/
+.env/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+

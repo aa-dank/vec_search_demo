@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          upload a file
+        </div>
+        <div class="card-body">
+          {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="file" class="form-label">file</label>
+              <input class="form-control" type="file" id="file" name="file" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="server_root" class="form-label">
+                server root (optional)
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                id="server_root"
+                name="server_root"
+                placeholder="e.g. \\\\server\\share or /mnt/archives"
+                value="{{ server_root or '' }}"
+              >
+              <div class="form-text">
+                this will be prepended to the directory + filename from the database.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              run similarity search
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          results
+        </div>
+        <div class="card-body">
+          {% if query_text %}
+            <p><strong>extracted text (truncated):</strong></p>
+            <pre style="max-height: 200px; overflow-y: auto; white-space: pre-wrap;">{{ query_text[:2000] }}</pre>
+          {% else %}
+            <p class="text-muted">no query yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if results %}
+    <div class="card">
+      <div class="card-header">
+        most similar files (ordered by {{ distance_metric }} distance)
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm table-striped mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>distance</th>
+                <th>file hash</th>
+                <th>directory</th>
+                <th>filename</th>
+                <th>full path</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in results %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>
+                    {% if row.distance is not none %}
+                      {{ "%.4f" | format(row.distance) }}
+                    {% else %}
+                      &mdash;
+                    {% endif %}
+                  </td>
+                  <td><code>{{ row.file_hash }}</code></td>
+                  <td>{{ row.directory }}</td>
+                  <td>{{ row.filename }}</td>
+                  <td>
+                    {% if row.full_path %}
+                      <code>{{ row.full_path }}</code>
+                    {% else %}
+                      <span class="text-muted">n/a</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
