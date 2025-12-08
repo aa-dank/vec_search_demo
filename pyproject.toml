@@ -10,6 +10,7 @@ dependencies = [
     "flask>=3.1.2",
     "httpx>=0.28.1",
     "mammoth>=1.11.0",
+    "markdown>=3.10",
     "numpy>=2.3.5",
     "ocrmypdf>=16.12.0",
     "pandas>=2.3.3",
@@ -20,5 +21,6 @@ dependencies = [
     "pytesseract>=0.3.13",
     "python-docx>=1.2.0",
     "pywin32>=311",
+    "sentence-transformers>=5.1.2",
     "striprtf>=0.0.29",
 ]

@@ -8,8 +8,17 @@ from db import get_connection
 
 # you will replace these imports with your real api
 # i’m guessing the names; adjust to actual functions.
-from embedding.minilm import get_embedding  # TODO: fix name if different
+from embedding.minilm import MiniLMEmbedder
 from text_extraction.basic_extraction import extract_text_from_path  # TODO: fix name
+
+
+_embedder = MiniLMEmbedder()
+
+
+def _embed_text(text: str):
+    """Encode the uploaded text with the cached MiniLM embedder."""
+
+    return _embedder.encode([text])[0]
 
 
 def create_app() -> Flask:
@@ -44,7 +53,7 @@ def create_app() -> Flask:
                         error = "no text could be extracted from that file."
                     else:
                         # 2) embed text using your existing minilm embedding
-                        query_vec = get_embedding(query_text)
+                        query_vec = _embed_text(query_text)
 
                         # make sure it's a plain python list, psycopg wants that
                         query_vec = list(map(float, query_vec))
