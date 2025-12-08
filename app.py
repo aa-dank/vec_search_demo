@@ -13,7 +13,62 @@ from db import get_connection
 # you will replace these imports with your real api
 # i'm guessing the names; adjust to actual functions.
 from embedding.minilm import MiniLMEmbedder
-from text_extraction.basic_extraction import extract_text_from_path  # TODO: fix name
+
+from text_extraction.pdf_extraction import PDFTextExtractor
+from text_extraction.basic_extraction import TextFileTextExtractor, TikaTextExtractor, get_extractor_for_file
+from text_extraction.image_extraction import ImageTextExtractor
+from text_extraction.office_doc_extraction import PresentationTextExtractor, SpreadsheetTextExtractor, WordFileTextExtractor
+from text_extraction.web_extraction import HtmlTextExtractor, EmailTextExtractor
+from text_extraction.extraction_utils import common_char_replacements, strip_diacritics, normalize_unicode, normalize_whitespace
+
+
+# Initialize extractors and Tika fallback
+pdf_extractor = PDFTextExtractor()
+txt_extractor = TextFileTextExtractor()
+image_extractor = ImageTextExtractor()
+presentation_extractor = PresentationTextExtractor()
+spreadsheet_extractor = SpreadsheetTextExtractor()
+word_extractor = WordFileTextExtractor()
+html_extractor = HtmlTextExtractor()
+email_extractor = EmailTextExtractor()
+tika_extractor = TikaTextExtractor()
+extractors_list = [
+    pdf_extractor,
+    txt_extractor,
+    image_extractor,
+    presentation_extractor,
+    spreadsheet_extractor,
+    word_extractor,
+    html_extractor,
+    email_extractor,
+]
+
+
+def extract_and_normalize_text(file_path: str) -> str:
+    """Extract text from a file and apply normalization pipeline.
+    
+    Equivalent to the text extraction logic in add_files_pipeline.py.
+    Uses specialized extractors for different file types, with Tika as fallback.
+    Applies text normalization and cleaning steps.
+    
+    Args:
+        file_path: Path to the file to extract text from
+        
+    Returns:
+        Normalized text extracted from the file
+    """
+    # Select appropriate extractor or fallback to Tika
+    extractor = get_extractor_for_file(file_path, extractors_list)
+    text = extractor(file_path) if extractor else tika_extractor(file_path)
+    
+    if text:
+        # Apply normalization pipeline from add_files_pipeline
+        text = common_char_replacements(text)
+        text = strip_diacritics(text)
+        text = normalize_unicode(text)
+        text = normalize_whitespace(text)
+    
+    return text or ""
 
 
 _embedder = MiniLMEmbedder()
@@ -66,7 +121,7 @@ async def index_post(
 
         try:
             # 1) extract text using your existing pipeline
-            query_text = extract_text_from_path(tmp_path)
+            query_text = extract_and_normalize_text(tmp_path)
 
             if not query_text or not query_text.strip():
                 error = "no text could be extracted from that file."
