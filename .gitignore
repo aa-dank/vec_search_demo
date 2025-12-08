@@ -14,3 +14,6 @@ venv/
 .vscode/
 .idea/
 
+# llm agent files
+WARP.md
+agent.md
