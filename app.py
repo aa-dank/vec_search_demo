@@ -1,4 +1,5 @@
 import os
+import shutil
 import tempfile
 from typing import Optional
 
@@ -108,16 +109,19 @@ async def index_post(
     error = None
     results = []
     query_text = None
-    distance_metric = "cosine"  # just for display rn
+    distance_metric = "cosine"
 
     if not file or not file.filename:
         error = "please choose a file."
     else:
-        # save uploaded file to a temp location
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            content = await file.read()
+        temp_dir = tempfile.mkdtemp(prefix="upload_")
+        safe_filename = os.path.basename(file.filename)
+        tmp_path = os.path.join(temp_dir, safe_filename)
+
+        # save uploaded file to a temp location that preserves its original name
+        content = await file.read()
+        with open(tmp_path, "wb") as tmp:
             tmp.write(content)
-            tmp_path = tmp.name
 
         try:
             # 1) extract text using your existing pipeline
@@ -183,11 +187,16 @@ async def index_post(
                     )
 
         finally:
-            # clean up temp file
+            # clean up temp file and containing directory
             try:
                 os.remove(tmp_path)
             except OSError:
                 pass
+
+            try:
+                os.rmdir(temp_dir)
+            except OSError:
+                shutil.rmtree(temp_dir, ignore_errors=True)
 
     return templates.TemplateResponse(
         "index.html",

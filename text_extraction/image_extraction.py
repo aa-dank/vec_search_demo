@@ -37,7 +37,7 @@ class ImageTextExtractor(FileTextExtractor):
                  preprocess: bool = True,
                  max_side: int = 3000,
                  default_image_dpi: int = 300):
-        """
+        r"""
         Parameters
         ----------
         lang : str
