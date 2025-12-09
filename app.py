@@ -11,8 +11,6 @@ from fastapi.templating import Jinja2Templates
 from config import Config
 from db import get_connection
 
-# you will replace these imports with your real api
-# i'm guessing the names; adjust to actual functions.
 from embedding.minilm import MiniLMEmbedder
 
 from text_extraction.pdf_extraction import PDFTextExtractor
