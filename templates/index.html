@@ -19,19 +19,19 @@
             </div>
 
             <div class="mb-3">
-              <label for="server_root" class="form-label">
-                server root (optional)
+              <label for="search_target_path" class="form-label">
+                search target path (optional)
               </label>
               <input
                 class="form-control"
                 type="text"
-                id="server_root"
-                name="server_root"
-                placeholder="e.g. \\\\server\\share or /mnt/archives"
-                value="{{ server_root or '' }}"
+                id="search_target_path"
+                name="search_target_path"
+                placeholder="e.g. N:\PPDO\Records\Subfolder"
+                value="{{ search_target_path or '' }}"
               >
               <div class="form-text">
-                this will be prepended to the directory + filename from the database.
+                Limit search to files within this directory.
               </div>
             </div>
 
